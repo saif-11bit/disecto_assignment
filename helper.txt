@@ -1,8 +1,0 @@
-COVID_CONSULTANCY:
-    USER_TYPES -> VISITORS , CONSULTANTS --Done
-    LIVE STATS (Chart & Table for Selected Country) --Done(Stats) --Pending(Chart)
-    INSTANT CHAT B/W VISITORS AND CONSULTANTS (AVAILABLE CONSULTANTS) --Done
-    AUTH --Done
-    LIST OF CONSULTANTS AS (ONLINE, OFFLINE, BUSY) --Done
-    TRACK WORKING PERIOD FOR CONSULTANTS AND SHOW ON DASHBORAD --Done
-    live feed for tweets for hashtag #COVID19 and #OMICRON --Done
