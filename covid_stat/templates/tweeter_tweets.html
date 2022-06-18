@@ -1,0 +1,21 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Covid19 Tracker 
+{% endblock %} {% block css %}
+{% endblock %} {% block body %}
+
+<div class="container">
+    <div class="row">
+      {% for i in tweets_context %}
+      <!--  -->
+      <div class="col-lg-8 offset-lg-4">
+        <blockquote class="twitter-tweet">
+          <p>{{ i.text }}</p>
+          <a href="https://twitter.com/{{i.user.screen_name}}/status/{{i.id}}">{{ i.time_created }}</a>
+        </blockquote>
+      </div>
+      <!--  -->
+      {% endfor %}
+    </div>
+  </div>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+{% endblock %} {% block js %}
+ {% endblock %}

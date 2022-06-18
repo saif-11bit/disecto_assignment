@@ -1,0 +1,105 @@
+{% extends 'base.html' %} {% load static %} {% block title %} Covid19
+Tracker {% endblock %} 
+{% block css %}
+{% endblock %} {% block body %}
+<div class="container">
+  <h1 style="margin-top: 20;">Live Covid19 Tracker</h1>
+  <canvas id="myChart" width="600" height="400"></canvas>
+  <div class="table-container" style="margin-top: 10;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">SNo</th>
+          <th scope="col">Latitude</th>
+          <th scope="col">Longitude</th>
+          <th scope="col">Total Active Cases</th>
+          <th scope="col">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in data %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td id="{{forloop.counter}}_lat">{{i.Lat}}</td>
+          <td id="{{forloop.counter}}_lon">{{i.Lon}}</td>
+          <td id="{{forloop.counter}}_cases">{{i.Active}}</td>
+          <td id="{{forloop.counter}}_date">{{i.Date}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ room_name|json_script:"room-name" }}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
+<script>
+  const roomName = JSON.parse(document.getElementById('room-name').textContent)
+  var queryString = window.location.search;
+  queryString = queryString.substring(1);
+  const covidSocket = new WebSocket(
+    'ws://' +
+    window.location.host +
+    '/ws/covid/' +
+    roomName +
+    '/' +
+    '?' +
+    queryString
+  );
+
+
+// graph
+const ctx = document.getElementById('myChart').getContext('2d');
+const dates = {{dates|safe}}
+const active_cases = {{active_cases|safe}}
+
+var graphData = {
+  type: 'bar',
+  data: {
+    labels: dates,
+    datasets: [{
+        label: '# of Active Cases',
+        data: active_cases,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        borderWidth: 1
+    }]
+  },
+  options: {
+      scales: {
+          y: {
+              beginAtZero: true
+          }
+      }
+  }
+}
+const myChart = new Chart(ctx, graphData);
+
+//socker js
+  covidSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    
+    var newGraphDatesData = graphData.data.labels;
+    var newGraphCasesData = graphData.data.datasets[0].data;
+    newGraphDatesData = []
+    newGraphCasesData = []
+    for (const row of Object.entries(data)) {
+      counter = parseInt(row[0]) + 1;
+      document.getElementById(counter + '_lat').innerHTML = row[1]['Lat'];
+      document.getElementById(counter + '_lon').innerHTML = row[1]['Lon'];
+      document.getElementById(counter + '_cases').innerHTML = row[1]['Active'];
+      document.getElementById(counter + '_date').innerHTML = row[1]['Date'];
+      
+      newGraphDatesData.push(row[1]['Date']);
+      newGraphCasesData.push(row[1]['Active']);
+    }
+    graphData.data.labels = newGraphDatesData;
+    console.log(graphData.data.labels)
+    graphData.data.datasets[0].data=newGraphCasesData;
+
+    myChart.update();
+    console.log("worked")
+  }
+</script>
+
+{% endblock %} 

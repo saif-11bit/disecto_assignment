@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Chat{% endblock %}
+{% block css %}{% endblock %}
+
+{% block body %}
+
+    Select consultant you wanna talk to!<br>
+
+    {% for consultant in consultants %}
+      <input type="hidden" id="room-name-input" value="{{consultant.user.id}}">
+      <input id="room-name-submit" type="button" value="{{consultant.user.email}} ({{consultant.status}})">
+    {% endfor %}
+
+    <script>
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            window.location.pathname = '/demo/' + roomName + '/';
+        };
+    </script>
+{% endblock %}
+
+
+{% block js %}{% endblock %}
