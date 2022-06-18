@@ -20,6 +20,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @sync_to_async
     def check_consultant_online(self, room_name):
         consultant = Consultant.objects.filter(user=room_name).first()
+        if consultant.status == 'ONLINE':
+            return True
+        return False
+    
+    @sync_to_async
+    def check_consultant_online_or_busy(self, room_name):
+        consultant = Consultant.objects.filter(user=room_name).first()
         if consultant.status == 'BUSY' or consultant.status == 'ONLINE':
             return True
         return False
@@ -77,7 +84,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.update_consultant_status_to_online(self.user_id)
             self.scope['cookies']['start_time'] = datetime.now()
         elif self.scope['user'].is_visitor:
-            await self.update_consultant_status_to_busy(self.room_name)
+            consultant_online = await self.check_consultant_online(self.room_name)
+            if consultant_online:
+                await self.update_consultant_status_to_busy(self.room_name)
 
         await self.accept()
         
@@ -91,7 +100,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.update_consultant_status_to_offline(self.user_id)
             await self.track_working_period(self.user_id, disconnect_time)
         elif self.scope['user'].is_visitor:
-            is_online = await self.check_consultant_online(self.room_name)
+            is_online = await self.check_consultant_online_or_busy(self.room_name)
             if is_online:
                 await self.update_consultant_status_to_online(self.room_name)
         

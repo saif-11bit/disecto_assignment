@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import tweepy
 import pytz
 from authentication.models import Consultant
-
+from django.http import HttpResponseForbidden
 load_dotenv()
 
 API_KEY=os.getenv('API_KEY')
@@ -48,16 +48,22 @@ def chat_list_view(request):
     if request.user.is_authenticated and request.user.is_visitor:
         consultants = Consultant.objects.all()
         return render(request, 'chat_list.html', {'consultants': consultants})
+    
+    return HttpResponseForbidden()
 
 
 def room(request, room_name):
     if request.user.is_authenticated and request.user.is_visitor:
-        return render(request, 'room.html', {
-            'room_name': room_name
-        })
+        is_con_online = Consultant.objects.filter(user=room_name).first()
+        if is_con_online.status=='ONLINE':
+            return render(request, 'room.html', {
+                'room_name': room_name
+            })
+    return HttpResponseForbidden()
     
 def consultant_room(request):
     if request.user.is_authenticated and request.user.is_consultant:
         return render(request, 'room.html', {
             'room_name': request.user.id
         })
+    return HttpResponseForbidden()
