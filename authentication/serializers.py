@@ -48,7 +48,7 @@ class VisitorRegisterSerializer(serializers.ModelSerializer):
         usr.is_visitor = True
         usr.save()
         visitor = Visitor.objects.create(user_id=usr.id, **validated_date)
-        return usr
+        return visitor
 
 
 class EmailVerificationSerializer(serializers.ModelSerializer):

@@ -35,7 +35,6 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'authentication.User'
 
-SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
@@ -127,7 +126,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
 }
 
@@ -159,18 +158,7 @@ SWAGGER_SETTINGS = {
     }
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
-}
 
-
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
